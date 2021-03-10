@@ -1,4 +1,4 @@
-module pkgalias
+module github.com/sachaos/pkgalias
 
 go 1.16
 

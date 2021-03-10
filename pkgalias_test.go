@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/gostaticanalysis/testutil"
+	"github.com/sachaos/pkgalias"
 	"golang.org/x/tools/go/analysis/analysistest"
-	"pkgalias"
 )
 
 // TestAnalyzer is a test for Analyzer.

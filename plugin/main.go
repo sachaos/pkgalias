@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"golang.org/x/tools/go/analysis"
-	"pkgalias"
+	"github.com/sachaos/pkgalias"
 )
 
 // flags for Analyzer.Flag.

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"golang.org/x/tools/go/analysis/unitchecker"
-	"pkgalias"
+	"golang.org/x/tools/go/analysis/multichecker"
+	"github.com/sachaos/pkgalias"
 )
 
-func main() { unitchecker.Main(pkgalias.Analyzer) }
+func main() { multichecker.Main(pkgalias.Analyzer) }
