@@ -24,26 +24,26 @@ var Analyzer = &analysis.Analyzer{
 	},
 }
 
-type fullpath = string
-type alias = string
 
 type config struct {
-	settings []*expectedPackage `yaml:"settings"`
+	Settings []*expectedPackage `yaml:"settings"`
 }
 
 type expectedPackage struct {
-	alias    alias    `yaml:"alias"`
-	fullpath fullpath `yaml:"fullpath"`
+	Alias    string `yaml:"alias"`
+	Fullpath string `yaml:"fullpath"`
 }
 
 func loadConfig() *config {
 	var cnf config
 	confFile, err := os.Open(".pkgalias.yaml")
 	if err != nil {
+		fmt.Println("failed to load .pkgalias.yaml")
 		return &cnf
 	}
 
 	if err := yaml.NewDecoder(confFile).Decode(&cnf); err != nil {
+		fmt.Println("failed to decode config")
 		return &cnf
 	}
 
@@ -54,9 +54,9 @@ func runWithConfig(c *config) func (pass *analysis.Pass) (interface{}, error) {
 	return func (pass *analysis.Pass) (interface{}, error) {
 		inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 
-		var aliasDict = map[fullpath]alias{}
-		for _, expectedPackage := range c.settings {
-			aliasDict[expectedPackage.fullpath] = expectedPackage.alias
+		var aliasDict = map[string]string{}
+		for _, expectedPackage := range c.Settings {
+			aliasDict[expectedPackage.Fullpath] = expectedPackage.Alias
 		}
 
 		nodeFilter := []ast.Node{

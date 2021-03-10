@@ -12,22 +12,22 @@ import (
 // TestAnalyzer is a test for Analyzer.
 func TestAnalyzer(t *testing.T) {
 	var cnf = &config{
-		settings: []*expectedPackage{
+		Settings: []*expectedPackage{
 			{
-				alias:    "m",
-				fullpath: "math",
+				Alias:    "m",
+				Fullpath: "math",
 			},
 			{
-				alias:    "format",
-				fullpath: "fmt",
+				Alias:    "format",
+				Fullpath: "fmt",
 			},
 			{
-				alias:    "opesys",
-				fullpath: "os",
+				Alias:    "opesys",
+				Fullpath: "os",
 			},
 			{
-				alias:    "",
-				fullpath: "net",
+				Alias:    "",
+				Fullpath: "net",
 			},
 		},
 	}

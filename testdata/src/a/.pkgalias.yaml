@@ -1,0 +1,9 @@
+settings:
+  - alias: m
+    fullpath: math
+  - alias: format
+    fullpath: fmt
+  - alias: opesys
+    fullpath: os
+  - alias: ""
+    fullpath: net
