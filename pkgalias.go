@@ -3,6 +3,7 @@ package pkgalias
 import (
 	"fmt"
 	"go/ast"
+	"go/token"
 	"go/types"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -83,7 +84,14 @@ func runWithConfig(c *config) func (pass *analysis.Pass) (interface{}, error) {
 
 							actName := ident.Name
 							if expAlias != actName {
-								pass.Reportf(n.Pos(), fmt.Sprintf(`invalid alias: use "%s" instead of "%s"`, expAlias, actName))
+								msg := fmt.Sprintf(`invalid alias: use "%s" instead of "%s"`, expAlias, actName)
+								pass.Report(analysis.Diagnostic{
+									Pos:            n.Pos(),
+									Message:        msg,
+									SuggestedFixes: []analysis.SuggestedFix{
+										replacementSuggest(ident, expAlias, msg),
+									},
+								})
 							}
 						}
 					}
@@ -91,13 +99,38 @@ func runWithConfig(c *config) func (pass *analysis.Pass) (interface{}, error) {
 			case *ast.ImportSpec:
 				path := strings.Trim(n.Path.Value, "\"")
 				if expAlias, ok := aliasDict[path]; ok {
-					if n.Name != nil {
-						if expAlias != n.Name.Name {
-							pass.Reportf(n.Pos(), fmt.Sprintf(`invalid alias: package name should be "%s"`, expAlias))
+					if expAlias != "" {
+						if n.Name != nil {
+							if n.Name.Name != expAlias {
+								msg := fmt.Sprintf(`invalid alias: package name should be "%s", replace this`, expAlias)
+								pass.Report(analysis.Diagnostic{
+									Pos:            n.Name.Pos(),
+									Message:        msg,
+									SuggestedFixes: []analysis.SuggestedFix{
+										replacementSuggest(n.Name, expAlias, msg),
+									},
+								})
+							}
+						} else {
+							msg := fmt.Sprintf(`invalid alias: package name should be "%s", insert this.`, expAlias)
+							pass.Report(analysis.Diagnostic{
+								Pos:            n.Pos(),
+								Message:        msg,
+								SuggestedFixes: []analysis.SuggestedFix{
+									insertSuggest(n.Pos(), expAlias, msg),
+								},
+							})
 						}
 					} else {
-						if expAlias != "" {
-							pass.Reportf(n.Pos(), `invalid alias: package name should not be specified`)
+						if n.Name != nil {
+							msg := `invalid alias: package name should not be specified, delete this.`
+							pass.Report(analysis.Diagnostic{
+								Pos:            n.Name.Pos(),
+								Message:        msg,
+								SuggestedFixes: []analysis.SuggestedFix{
+									deleteSuggest(n.Name, msg),
+								},
+							})
 						}
 					}
 				}
@@ -105,5 +138,44 @@ func runWithConfig(c *config) func (pass *analysis.Pass) (interface{}, error) {
 		})
 
 		return nil, nil
+	}
+}
+
+func replacementSuggest(node ast.Node, newText string, message string) analysis.SuggestedFix {
+	return analysis.SuggestedFix{
+		Message:   message,
+		TextEdits: []analysis.TextEdit{
+			{
+				Pos:     node.Pos(),
+				End:     node.End(),
+				NewText: []byte(newText),
+			},
+		},
+	}
+}
+
+func insertSuggest(pos token.Pos, newText string, message string) analysis.SuggestedFix {
+	return analysis.SuggestedFix{
+		Message:   message,
+		TextEdits: []analysis.TextEdit{
+			{
+				Pos:     pos,
+				End:     pos,
+				NewText: []byte(newText),
+			},
+		},
+	}
+}
+
+func deleteSuggest(node ast.Node, message string) analysis.SuggestedFix {
+	return analysis.SuggestedFix{
+		Message:   message,
+		TextEdits: []analysis.TextEdit{
+			{
+				Pos:     node.Pos(),
+				End:     node.End(),
+				NewText: []byte(""),
+			},
+		},
 	}
 }

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"golang.org/x/tools/go/analysis/multichecker"
 	"github.com/sachaos/pkgalias"
+	"golang.org/x/tools/go/analysis/singlechecker"
 )
 
-func main() { multichecker.Main(pkgalias.Analyzer) }
+func main() { singlechecker.Main(pkgalias.Analyzer) }
