@@ -29,6 +29,10 @@ func TestAnalyzer(t *testing.T) {
 				Alias:    "",
 				Fullpath: "net",
 			},
+			{
+				Alias:    "",
+				Fullpath: "strconv",
+			},
 		},
 	}
 

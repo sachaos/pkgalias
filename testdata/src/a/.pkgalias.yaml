@@ -7,3 +7,5 @@ settings:
     fullpath: os
   - alias: ""
     fullpath: net
+  - alias: ""
+    fullpath: strconv
