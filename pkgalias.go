@@ -26,25 +26,25 @@ type fullpath = string
 type alias = string
 
 type expectedPackage struct {
-	alias alias
-	fullpath fullpath
+	alias    alias    `yaml:"alias"`
+	fullpath fullpath `yaml:"fullpath"`
 }
 
 var testSets = []*expectedPackage{
 	{
-		alias: "m",
+		alias:    "m",
 		fullpath: "math",
 	},
 	{
-		alias: "format",
+		alias:    "format",
 		fullpath: "fmt",
 	},
 	{
-		alias: "opesys",
+		alias:    "opesys",
 		fullpath: "os",
 	},
 	{
-		alias: "",
+		alias:    "",
 		fullpath: "net",
 	},
 }
